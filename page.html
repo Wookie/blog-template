@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<!--[if IE 8]>
+<html class="no-js lt-ie9" lang="en" >
+<![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" >
+<!--<![endif]-->
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>{{ hx(page["title"]) }}</title>
+  <link rel="stylesheet" href="/css/normalize.css" />
+  <link rel="stylesheet" href="/css/foundation.css" />
+  <link href="/css/font-awesome.css" rel="stylesheet">
+  <link href='/css/custom.css' rel='stylesheet' type='text/css'>
+  <script src="/js/vendor/custom.modernizr.js"></script>
+</head>
+<body>
+
+  <div id="wrap"> <!-- only purpose of this div: sticky footer -->
+
+    <!-- Navigation -->
+    <nav class="top-bar">
+      <ul class="title-area">
+        <li class="name">
+        </li>
+        <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+      </ul>
+      <section class="top-bar-section">
+      <ul class="left">
+        <li class="has-dropdown"><a href="#">Posts</a>
+          <ul class="left dropdown">
+            {%
+              from datetime import datetime
+              posts = [p for p in pages if "post" in p and p.title != "LPo"] # get all blog post pages
+              posts.sort(key=lambda p: p.get("date"), reverse=True) # sort post pages by date
+              entry = '<li><a href="%s">%s<br /><span style="font-size: .8em">%s</span></a></li>'
+              for p in posts:
+                  print(entry % (p["url"], hx(p["post"]), hx(datetime.strptime(p["date"], "%Y-%m-%d").strftime("%B %d, %Y"))))
+            %}
+          </ul>
+        </li>
+      </ul>
+      <ul class="right">
+        <li><a href="http://twitter.com/your-twitter-handle"><i class="icon-twitter"><span class="show-for-small">@your-twitter-handle</span></i></a></li>
+        <li><a href="http://github.com/your-github-account"><i class="icon-github"><span class="show-for-small">your-github-account</span></i></a></li>
+        <li><a href="/rss.xml"><i class="icon-rss"><span class="show-for-small">RSS</span></i></a></li>
+        <li><a href="bitcoin:1DLZKjieKe5pDGMqRHFiz38FUayPDWhgVP?label=LPo%20Tip%20Jar"><i class="icon-btc"><span class="show-for-small">Bitcoin</span></i></a></li>
+      </ul>
+      </section>
+    </nav>
+
+    <!-- Content -->
+    <div class="row">
+      <div class="large-12 columns">{{ __content__ }}</div>
+    </div>
+
+    <div id="push"></div> <!-- push footer down -->
+  </div> <!-- wrap -->
+
+  <!-- Footer -->
+  <hr />
+  <footer class="row">
+    <div class="large-12 columns">
+      <div class="row">
+
+        <p class="text-center">
+          <small>
+          Built with <a href="http://bitbucket.org/obensonne/poole">Poole</a>
+          &middot;
+          Using <a href="http://jquery.com">jQuery</a>, 
+          <a href="http://foundation.zurb.com/">Foundation</a>, and
+          <a href="http://fortawesome.github.io/Font-Awesome/">Font Awesome</a>
+          &middot;
+          Licensed as <a href="http://creativecommons.org/licenses/by-sa/3.0">CC-SA</a>
+          &middot;
+          <a href="http://validator.w3.org/check?uri=referer">Validate me</a>
+          </small>
+        </p>
+
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    document.write('<script src='
+        + ('__proto__' in {} ? 'js/vendor/zepto'
+            : 'js/vendor/jquery') + '.js><\/script>')
+  </script>
+  <script src="js/foundation.min.js"></script>
+  <!-- foundation extras - uncomment as needed:
+  <script src="js/foundation/foundation.js"></script>
+  <script src="js/foundation/foundation.alerts.js"></script>
+  <script src="js/foundation/foundation.clearing.js"></script>
+  <script src="js/foundation/foundation.cookie.js"></script>
+  <script src="js/foundation/foundation.dropdown.js"></script>
+  <script src="js/foundation/foundation.forms.js"></script>
+  <script src="js/foundation/foundation.joyride.js"></script>
+  <script src="js/foundation/foundation.magellan.js"></script>
+  <script src="js/foundation/foundation.orbit.js"></script>
+  <script src="js/foundation/foundation.placeholder.js"></script>
+  <script src="js/foundation/foundation.reveal.js"></script>
+  <script src="js/foundation/foundation.section.js"></script>
+  <script src="js/foundation/foundation.tooltips.js"></script>
+  <script src="js/foundation/foundation.topbar.js"></script>
+  -->
+  <script>
+    $(document).foundation();
+  </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+#!/bin/bash
+set -x
+
+# config for this script
+BASE_URL="http://blog.linuxprogrammer.org"
+REPO_DIR=${HOME}/blog/
+TMP_DIR=${HOME}/.tmp
+VERSIONS_DIR=/var/www/.versions
+CURRENT_LINK=/var/www/poole
+PREVIOUS_LINK=/var/www/previous
+OWNER=www-data
+GROUP=www-data
+
+# clean up before we start
+rm -rf ${TMP_DIR}
+
+# clone the latest version of the repo into ~/.tmp
+git clone --single-branch --branch master ${REPO_DIR} ${TMP_DIR}
+
+if [ $? -ne 0 ]; then
+  echo "Failed!"
+  exit 1
+fi
+
+# have poole build the static files
+${HOME}/.local/bin/poole --base-url=${BASE_URL} --build ${TMP_DIR}
+
+if [ $? -ne 0 ]; then
+  echo "Failed!"
+  exit 1
+fi
+
+# get the short hash for the HEAD revision
+REVISION=`git --git-dir=${TMP_DIR}/.git --work-tree=${TMP_DIR} rev-parse --short HEAD`
+
+# mv the output dir to a dir named for the revision hash
+sudo mv ${TMP_DIR}/output ${VERSIONS_DIR}/${REVISION}
+
+if [ $? -ne 0 ]; then
+  echo "Failed!"
+  exit 1
+fi
+
+# clean up
+rm -rf ${TMP_DIR}
+
+if [ $? -ne 0 ]; then
+  echo "Failed!"
+  exit 1
+fi
+
+# chown the files to the correct user and group
+sudo chown -R ${OWNER}.${GROUP} ${VERSIONS_DIR}/${REVISION}
+
+if [ $? -ne 0 ]; then
+  echo "Failed!"
+  exit 1
+fi
+
+# copy the current poole symbolic link to previous so we know
+# the previous revision if something goes wrong and we need to
+# roll back quickly.
+sudo cp -pP ${CURRENT_LINK} ${PREVIOUS_LINK}
+
+if [ $? -ne 0 ]; then
+  echo "Failed!"
+  exit 1
+fi
+
+# update the poole symbolic link to point to the new site revision
+sudo ln -sfn ${VERSIONS_DIR}/${REVISION} ${CURRENT_LINK}
+
+if [ $? -ne 0 ]; then
+  echo "Failed!"
+  exit 1
+fi
+
+# change ownership of the link
+sudo chown -h ${OWNER}.${GROUP} ${VERSIONS_DIR}/${REVISION}
+
+if [ $? -ne 0 ]; then
+  echo "Failed!"
+  exit 1
+fi
+
+
