@@ -6,22 +6,22 @@ The page.html file uses [foundation](http://foundation.zurb.com/) to be HTML5 an
 
 I use git as my publishing tool.  The included post-recieve script handles running poole and deploying the files to the web root of my hosted webserver.  Setting this up on your server is easy:
 
-# First create an acccount on your webserver for deploying to your webserver.
-# Create a bare repo in the home directory of the deploy user account.
-# Edit the post-receive script to match your site (e.g. changet the base-url passed to pool and adjust the folders for where your webserver serves files from).
-# Set up the permissions of your webserver root and deploy user so that the deploy user is able to write files into the directory.
-# Write some blog posts in the input directory.
-# Commit the blog posts and push to the remote repo on your web server.
-# The post-receive script should run after your commit and handle running poole.py to generate the new version of your site and then deploy it.
+1. First create an acccount on your webserver for deploying to your webserver.
+2. Create a bare repo in the home directory of the deploy user account.
+3. Edit the post-receive script to match your site (e.g. changet the base-url passed to pool and adjust the folders for where your webserver serves files from).
+4. Set up the permissions of your webserver root and deploy user so that the deploy user is able to write files into the directory.
+5. Write some blog posts in the input directory.
+6. Commit the blog posts and push to the remote repo on your web server.
+7. The post-receive script should run after your commit and handle running poole.py to generate the new version of your site and then deploy it.
 
 The post-receive script deploys files using atomic operations so that the deploy cannot break the site.  The version last step is an atomic overwrite of the symbolic link to the folder for the newest version of your site.  So either the full deploy works or it doesn't.  When this post-receive script runs it does the following:
 
-# Clones the master branch to a .tmp dir.
-# Executes poole.py on the .tmp dir.  This generates the new version of your site in .tmp/output.
-# It gets the short hash value for the revision and uses that as the name of the deploy folder in a .versions folder outside of the webserver's web root.
-# After fixing up permissions on the folders, it makes a backup copy of the symbolic link to the previous version.
-# Then it atomically changes the symbolic link for the web root to point to the new version of the site.
-# It then fixes permissions on the symbolic links.
+1. Clones the master branch to a .tmp dir.
+2. Executes poole.py on the .tmp dir.  This generates the new version of your site in .tmp/output.
+3. It gets the short hash value for the revision and uses that as the name of the deploy folder in a .versions folder outside of the webserver's web root.
+4. After fixing up permissions on the folders, it makes a backup copy of the symbolic link to the previous version.
+5. Then it atomically changes the symbolic link for the web root to point to the new version of the site.
+6. It then fixes permissions on the symbolic links.
 
 You'll notice that the post-receive script uses sudo for most of the commands.  I use the sudoers file to limit the commands that the deploy user can run.  In my sudoers file I have:
 
