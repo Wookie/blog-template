@@ -9,6 +9,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
+  {%
+    if "description" in page:
+      print('<meta name="description" content="%s">' % hx(page["description"]))
+
+    if "keywords" in page:
+      print('<meta name="keywords" content="%s">' % hx(page["keywords"]))
+
+    if "author" in page:
+      print('<meta name="author" content="%s">' % hx(page["author"]))
+  %}
   <title>{{ hx(page["title"]) }}</title>
   <link rel="stylesheet" href="/css/normalize.css" />
   <link rel="stylesheet" href="/css/foundation.css" />
@@ -37,14 +47,14 @@
               posts.sort(key=lambda p: p.get("date"), reverse=True) # sort post pages by date
               entry = '<li><a href="%s">%s<br /><span style="font-size: .8em">%s</span></a></li>'
               for p in posts:
-                  print(entry % (p["url"], hx(p["post"]), hx(datetime.strptime(p["date"], "%Y-%m-%d").strftime("%B %d, %Y"))))
+                print(entry % (urlq(p["url"]), hx(p["post"]), hx(p["printdate"])))
             %}
           </ul>
         </li>
       </ul>
       <ul class="right">
-        <li><a href="http://twitter.com/your-twitter-handle"><i class="icon-twitter"><span class="show-for-small">@your-twitter-handle</span></i></a></li>
-        <li><a href="http://github.com/your-github-account"><i class="icon-github"><span class="show-for-small">your-github-account</span></i></a></li>
+        <li><a href="http://twitter.com/dwhuseby"><i class="icon-twitter"><span class="show-for-small">@dwhuseby</span></i></a></li>
+        <li><a href="http://github.com/dhuseby"><i class="icon-github"><span class="show-for-small">dhuseby</span></i></a></li>
         <li><a href="/rss.xml"><i class="icon-rss"><span class="show-for-small">RSS</span></i></a></li>
         <li><a href="bitcoin:1DLZKjieKe5pDGMqRHFiz38FUayPDWhgVP?label=LPo%20Tip%20Jar"><i class="icon-btc"><span class="show-for-small">Bitcoin</span></i></a></li>
       </ul>

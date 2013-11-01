@@ -76,7 +76,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # change ownership of the link
-sudo chown -h ${OWNER}.${GROUP} ${VERSIONS_DIR}/${REVISION}
+sudo chown -h ${OWNER}.${GROUP} ${CURRENT_LINK}
 
 if [ $? -ne 0 ]; then
   echo "Failed!"

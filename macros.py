@@ -4,6 +4,18 @@ import email.utils
 import time
 import copy
 import codecs
+import urllib
+
+### BLOG POST DATE CONVERSION
+
+def hook_preconvert_date_conversion():
+    posts = [p for p in pages if "post" in p] # get all blog post pages
+    for p in posts:
+        if "date" in p and p["date"] != "1970-01-01":
+            # convert 2013-08-08 into August 8, 2013 
+            p["printdate"] = datetime.strptime(p["date"], "%Y-%m-%d").strftime("%B %e, %Y")
+        else:
+            p["printdate"] = "DRAFT"
 
 ### INDEX GENERATION
 
@@ -47,7 +59,7 @@ def hook_preconvert_sitemap():
     date = datetime.strftime(datetime.now(), "%Y-%m-%d")
     urls = []
     for p in pages:
-        urls.append(_SITEMAP_URL % (options.base_url.rstrip('/'), p.url, date,
+        urls.append(_SITEMAP_URL % (options.base_url.rstrip('/'), urllib.quote(p.url), date,
                     p.get("changefreq", "monthly"), p.get("priority", "0.8")))
     fname = os.path.join(options.project, "output", "sitemap.xml")
     fp = open(fname, 'w')
@@ -88,7 +100,7 @@ def hook_postconvert_rss():
     posts.sort(key=lambda p: p.date, reverse=True)
     for p in posts:
         title = p.post
-        link = "%s/%s" % (options.base_url.rstrip("/"), p.url)
+        link = "%s/%s" % (options.base_url.rstrip("/"), urllib.quote(p.url))
         desc = p.get("description", "")
         date = time.mktime(time.strptime("%s 12" % p.date, "%Y-%m-%d %H"))
         date = email.utils.formatdate(date)
